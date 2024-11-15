@@ -17,7 +17,7 @@ class Cliente(models.Model):
     creation = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     update = models.DateTimeField(null=True, blank=True)
 
-    def _str_(self):
+    def str(self):
         return "Perfil del cliente"+self.first_name
     
 class Propiedades(models.Model):
@@ -31,6 +31,7 @@ class Propiedades(models.Model):
     telefono = models.CharField(max_length=255, null=True, blank=True)
     estados = models.CharField(max_length=255, null=True, blank=True)
     imagenes = models.JSONField(default=list)
-    
-    def __str__(self):
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, default=1)  # Relación con Cliente
+
+    def _str_(self):
         return f"Propiedad: {self.direccion}, capacidad: {self.capacidad}"

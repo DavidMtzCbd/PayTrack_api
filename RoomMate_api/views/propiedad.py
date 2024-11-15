@@ -31,59 +31,61 @@ from rest_framework.parsers import MultiPartParser, FormParser
 import string
 import random
 import json
+import base64
 
 
-class PropiedadesAll(generics.CreateAPIView):
+
+class PropiedadesAll(generics.ListAPIView):
     permission_classes = (permissions.IsAuthenticated,)
+    
     def get(self, request, *args, **kwargs):
-        propiedades = Propiedades.objects.filter(user__is_active = 1).order_by("id")
+        propiedades = Propiedades.objects.filter(cliente__user__is_active=True).order_by("id")
         propiedades = PropiedadesSerializer(propiedades, many=True).data
-        #Aquí convertimos los valores de nuevo a un array
-        if not propiedades:
-            return Response({},400)
-        for propiedad in propiedades:
-            propiedad["servicios_json"] = json.loads(propiedad["servicios_json"])
 
-        return Response(propiedades, 200)
+        for propiedad in propiedades:
+            # Convertir las imágenes de la propiedad a base64
+            if propiedad.get("imagenes"):
+                propiedad["imagenes"] = []
+                for img_path in propiedad["imagenes"]:
+                    with open(f'{settings.MEDIA_ROOT}/{img_path}', 'rb') as image_file:
+                        encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+                        propiedad["imagenes"].append(f"data:image/jpeg;base64,{encoded_string}")
+
+        return Response(propiedades, status=status.HTTP_200_OK)
 
 class PropiedadesView(generics.CreateAPIView):
-    #Obtener usuario por ID
-    # permission_classes = (permissions.IsAuthenticated,)
-    def get(self, request, *args, **kwargs):
-        propiedad = get_object_or_404(Propiedades, id = request.GET.get("id"))
-        propiedad = PropiedadesSerializer(propiedad, many=False).data
-        propiedad["servicios_json"] = json.loads(propiedad["servicios_json"])
-        return Response(propiedad, 200)
-    
-    @transaction.atomic
+    # Obtener los datos de la solicitud POST
     def post(self, request, *args, **kwargs):
-        # Obtener los datos de la solicitud POST
-         propiedad = Propiedades.objects.create(
-                                            direccion= request.data["direccion"],
-                                            habitaciones= request.data["habitaciones"],
-                                            capacidad= request.data["capacidad"],
-                                            precio= request.data["precio"],
-                                            servicios_json = json.dumps(request.data["servicios_json"]),
-                                            sanitarios= request.data["sanitarios"],
-                                            telefono= request.data["telefono"],
-                                            estados=request.data["estados"])
-         propiedad.save() 
-         imagen_urls = []
-         if 'imagenes' in request.FILES:
+        propiedad = Propiedades.objects.create(
+            direccion=request.data["direccion"],
+            habitaciones=request.data["habitaciones"],
+            capacidad=request.data["capacidad"],
+            precio=request.data["precio"],
+            servicios_json=json.dumps(request.data["servicios_json"]),
+            sanitarios=request.data["sanitarios"],
+            telefono=request.data["telefono"],
+            estados=request.data["estados"]
+        )
+        propiedad.save()
+
+        imagenes_base64 = []
+        if 'imagenes' in request.FILES:
             for img in request.FILES.getlist('imagenes'):
-                image_path = f'imagenes_propiedades/{img.name}'
-                with open(f'{settings.MEDIA_ROOT}/{image_path}', 'wb+') as destination:
+                # Abrir la imagen y convertirla a base64
+                with open(f'{settings.MEDIA_ROOT}/imagenes_propiedades/{img.name}', 'wb+') as destination:
                     for chunk in img.chunks():
                         destination.write(chunk)
-                imagen_urls.append(f'{settings.MEDIA_URL}{image_path}')
+                
+                with open(f'{settings.MEDIA_ROOT}/imagenes_propiedades/{img.name}', 'rb') as image_file:
+                    # Leer la imagen y convertir a base64
+                    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+                    imagenes_base64.append(f"data:image/jpeg;base64,{encoded_string}")
 
-        # Almacenar las URLs de las imágenes en el campo JSON
-         propiedad.imagenes = imagen_urls
-         propiedad.save()
-         
-         
-         
-         return Response({"propiedad_created_id": propiedad.id }, 201)
+        # Almacenar las imágenes codificadas en base64
+        propiedad.imagenes = imagenes_base64
+        propiedad.save()
+
+        return Response({"propiedad_created_id": propiedad.id}, status=status.HTTP_201_CREATED)
      
      
     #Se tiene que modificar la parte de edicion y eliminar
