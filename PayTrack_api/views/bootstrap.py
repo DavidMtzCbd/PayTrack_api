@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.db.models import *
 from django.db import transaction
-from RoomMate_api.serializers import *
-from RoomMate_api.models import *
+from PayTrack_api.serializers import *
+from PayTrack_api.models import *
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication, TokenAuthentication
 from rest_framework.generics import CreateAPIView, DestroyAPIView, UpdateAPIView
 from rest_framework import permissions
@@ -29,11 +29,11 @@ from django.template.loader import render_to_string
 import string
 import random
 import json
-from RoomMate_api.puentes.mail import MailsBridge
-from RoomMate_api.file_storage.factory import FileStorageFactory
+from PayTrack_api.puentes.mail import MailsBridge
+from PayTrack_api.file_storage.factory import FileStorageFactory
 from django.db import transaction
-from RoomMate_api.cypher_utils import CypherUtils
-from RoomMate_api.data_utils import DataUtils
+from PayTrack_api.cypher_utils import CypherUtils
+from PayTrack_api.data_utils import DataUtils
 
 class VersionView(generics.GenericAPIView):
 

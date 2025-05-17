@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.db.models import *
 from django.db import transaction
-from RoomMate_api.serializers import *
-from RoomMate_api.models import *
+from PayTrack_api.serializers import *
+from PayTrack_api.models import *
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication, TokenAuthentication
 from rest_framework.generics import CreateAPIView, DestroyAPIView, UpdateAPIView
 from rest_framework import permissions
@@ -32,38 +32,28 @@ import random
 class CustomAuthToken(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data,
-                                           context={'request': request})
+        serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
 
         if user.is_active:
-            roles = user.groups.all()
-            role_names = []
-            for role in roles:
-                role_names.append(role.name)
-
-            # Si solo es un rol específico, asignamos el elemento 0
-            if len(role_names) > 0:
-                role_names = role_names[0]
-
             token, created = Token.objects.get_or_create(user=user)
 
-            if role_names == 'Estudiante':
-                cliente = Cliente.objects.filter(user=user).first()
+            cliente = Cliente.objects.filter(user=user).first()
+            if cliente:
                 cliente_data = ClienteSerializer(cliente).data
                 cliente_data["token"] = token.key
-                cliente_data["rol"] = "Estudiante"
-                return Response(cliente_data, status=status.HTTP_200_OK)
-            
-            if role_names == 'Propietario':
-                cliente = Cliente.objects.filter(user=user).first()
-                cliente_data = ClienteSerializer(cliente).data
-                cliente_data["token"] = token.key
-                cliente_data["rol"] = "Propietario"
                 return Response(cliente_data, status=status.HTTP_200_OK)
 
+            return Response({
+                'token': token.key,
+                'user_id': user.id,
+                'username': user.username,
+                'email': user.email
+            }, status=status.HTTP_200_OK)
+
         return Response({}, status=status.HTTP_403_FORBIDDEN)
+
 
 
 class Logout(generics.GenericAPIView):

@@ -2,8 +2,8 @@ import datetime
 from django.conf import settings
 import os
 from django.http import HttpResponse, Http404
-from RoomMate_api.file_storage.file_system_storage import FileSystemStorage
-from RoomMate_api.file_storage.google_cloud_bucket_storage import GoogleCloudBucketStorage
+from PayTrack_api.file_storage.file_system_storage import FileSystemStorage
+from PayTrack_api.file_storage.google_cloud_bucket_storage import GoogleCloudBucketStorage
 
 class FileStorageFactory:
 

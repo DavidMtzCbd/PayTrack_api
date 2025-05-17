@@ -1,9 +1,9 @@
-Django
+Django==5.0
 django-compat
 django-cors-headers
 djangorestframework
 django-filter
-mysqlclient
+mysqlclient==2.2.4
 pymysql
 django-rest-auth
 cryptography

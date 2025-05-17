@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
-from RoomMate_api.models import *
+from PayTrack_api.models import *
 
 class UserSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
@@ -13,12 +13,12 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id','first_name','last_name', 'email')
 
 class ClienteSerializer(serializers.ModelSerializer):
-    user=UserSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
     class Meta:
         model = Cliente
-        fields = "__all__"
+        fields = '__all__'
 
-class PropiedadesSerializer(serializers.ModelSerializer):
+class PagosSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Propiedades
+        model = Pagos
         fields = '__all__'

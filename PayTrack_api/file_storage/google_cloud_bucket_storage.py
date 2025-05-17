@@ -3,7 +3,7 @@ from django.conf import settings
 import os
 from django.http import HttpResponse, Http404
 from google.cloud import storage
-from RoomMate_api.data_utils import DataUtils
+from PayTrack_api.data_utils import DataUtils
 
 class GoogleCloudBucketStorage():
 

@@ -49,7 +49,7 @@ Thumbs.db
 *.wmv
 
 # Django Migrations
-RoomMate_api/migrations
+PayTrack_api/migrations
 
 # SQL Config
 #*.cnf

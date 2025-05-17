@@ -15,10 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from RoomMate_api.views import bootstrap
-from RoomMate_api.views import users
-from RoomMate_api.views import auth
-from RoomMate_api.views import propiedad
+from PayTrack_api.views import bootstrap
+from PayTrack_api.views import users
+from PayTrack_api.views import auth
+from PayTrack_api.views import pagos
 
 urlpatterns = [
     #Version
@@ -31,11 +31,11 @@ urlpatterns = [
         path('token/', auth.CustomAuthToken.as_view()),
     #Logout
         path('logout/', auth.Logout.as_view()),
-    #Create Materias
-        path('propiedades/', propiedad.PropiedadesView.as_view()),   
-    #Maestro Data
-        path('lista-propiedades/', propiedad.PropiedadesAll.as_view()),
-    #Edit Materia
-        path('propiedades-edit/', propiedad.PropiedadViewEdit.as_view())
-
+    #Create Pagos
+        path('pagos/', pagos.PagosView.as_view()),
+    #List Pagos
+        path('lista-pagos/', pagos.PagosAll.as_view()),
+    #Editar Pagos
+        path('pagos-edit/', pagos.PagosViewEdit.as_view()),
+    
 ]

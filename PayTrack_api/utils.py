@@ -2,6 +2,9 @@ import random
 import string
 import base64
 
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+
 class Utils:
 
     @staticmethod
@@ -45,3 +48,17 @@ class Utils:
         logo_b64 = content_type+str(base64.b64encode(logo.read()).decode())
 
         return logo_b64
+    
+    @staticmethod
+    def enviarCorreoBienvenida(email, nombre):
+        asunto = '¡Bienvenido a PayTrack 💰!'
+        from_email = 'tucorreo@gmail.com'
+        recipient_list = [email]
+
+        # Renderiza tu plantilla HTML 
+        html_content = render_to_string('emails/bienvenida.html', {'nombre': nombre})
+        text_content = f'Hola {nombre}, gracias por registrarte en PayTrack.'
+
+        msg = EmailMultiAlternatives(asunto, text_content, from_email, recipient_list)
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()

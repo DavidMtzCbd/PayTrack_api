@@ -28,10 +28,10 @@ C:/path_to_the_folder/> env/Project_name/Scripts/activate.bat
 $ pip3 install -r requirements.txt
 
 7. Configurar conexión a base de datos (MySQL)  
-/RoomMate_api/my.cnf
+/PayTrack_api/my.cnf
 
 8. Crear la base de datos y aplicar las migraciones  
-$ python3 manage.py makemigrations RoomMate_api  
+$ python3 manage.py makemigrations PayTrack_api  
 $ python3 manage.py migrate  
 
 
