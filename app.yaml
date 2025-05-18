@@ -1,3 +1,6 @@
+
+#En este archivo se define la configuración de la aplicación para Google App Engine.
+
 # [START django_app]
 service: default
 instance_class: F2
@@ -15,3 +18,4 @@ handlers:
 - url: /.*
   script: auto
 # [END django_app]
+
